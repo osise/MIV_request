@@ -61,7 +61,7 @@ namespace Запрос_информации_МИВ.Properties {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на PK!/•ЗЩџ[Content_Types].xml ў(  [остаток строки не уместился]&quot;;.
+        ///   Ищет локализованную строку, похожую на PK!&apos;ДK&gt;кС[Content_Types].xml ў(  [остаток строки не уместился]&quot;;.
         /// </summary>
         public static string Template {
             get {
