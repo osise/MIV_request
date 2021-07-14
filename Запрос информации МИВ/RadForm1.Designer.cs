@@ -145,7 +145,7 @@ namespace Запрос_информации_МИВ
             // 
             this.RootElement.ApplyShapeToControl = true;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "       Создание запросов в рамках МИВ v1.0";
+            this.Text = "       Создание запросов в рамках МИВ v1.0.4";
             this.ThemeName = "TelerikMetroBlue";
             ((System.ComponentModel.ISupportInitialize)(this.radRichTextEditor1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.radButton6)).EndInit();
