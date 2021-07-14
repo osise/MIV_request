@@ -37,6 +37,8 @@ namespace Запрос_информации_МИВ
         public DataTable finddata = new DataTable();
         public DataTable today = new DataTable();
         public DataTable yesterday = new DataTable();
+        StringBuilder sb = new StringBuilder();
+
 
         string sourcefile;
         public string ExcelFilePath { get; set; } = string.Empty;
@@ -62,6 +64,7 @@ namespace Запрос_информации_МИВ
             catch (Exception ex)
             {
                 MessageBox.Show("Не удалось выделить уникальные значения " + ex);
+                sb.Append(DateTime.Now + ": Не удалось выделить уникальные значения\r\n" + ex);
             }
         }
 
@@ -86,7 +89,7 @@ namespace Запрос_информации_МИВ
             catch (Exception ex)
             {
                 MessageBox.Show("Не удалось записать файлы " + ex + Convert.ToString(dt_copy.Rows[y][0]));
-               // radRichTextEditor1.Text += "Не удалось записать файлы " + Convert.ToString(dt_copy.Rows[y][0]) + "\n";
+                sb.Append(DateTime.Now + ": Не удалось записать файлы\r\n" + ex);
             }
         }
 
@@ -108,10 +111,14 @@ namespace Запрос_информации_МИВ
 
         void InsertToDocX(string meds, int y)
         {
-           
+            sb.Append("\r\n");
+            sb.Append(DateTime.Now + ": Обработка файла\r\n");
 
+            sb.Append(DateTime.Now + ": Убираем лишнее...\r\n");
+            sb.Append(DateTime.Now + ": " + meds + " -> ");
             string name = meds.Replace("\"", "");
-           // name = meds.TrimEnd('"');
+            sb.Append(name + "\r\n");
+            // name = meds.TrimEnd('"');
             if (name.Length == 0)
             { 
                 name = "Не найдены";
@@ -205,10 +212,11 @@ namespace Запрос_информации_МИВ
                     //add new row to table, after last row in table
                     digForTable.Descendants<TableRow>().Last().InsertAfterSelf(rowToInsert);
                 }
+                sb.Append(DateTime.Now + ": Создаем файл " + name + "\r\n");
                 cat++;
                 //newDoc.Save();
                 newDoc.Close();
-               // newDoc.Close();
+                sb.Append(DateTime.Now + ": Скопировано строк :" + finddata.Rows.Count + "\r\n");
             }
         }
 
@@ -339,6 +347,8 @@ namespace Запрос_информации_МИВ
                     FindEx(finddata, y);
                     worker.ReportProgress(percentage);
                 }
+                File.AppendAllText(@"C:\Sort-MIV\log.txt", sb.ToString());
+                sb.Clear();
             }
 
 
@@ -350,21 +360,32 @@ namespace Запрос_информации_МИВ
             {
                 progressBar1.Text = "Отменено!";
                 radRichTextEditor1.Text += "Отменено!\n";
+                sb.Append("\r\n");
+                sb.Append(DateTime.Now + ": Отменено!\r\n");
             }
 
             else if (!(e.Error == null))
             {
                 progressBar1.Text = ("Ошибка: " + e.Error.Message);
                 radRichTextEditor1.Text += "Ошибка: " + e.Error.Message + "\n";
+                sb.Append("\r\n");
+                sb.Append(DateTime.Now + ": Ошибка: " + e.Error.Message + "\r\n");
             }
 
             else
             {
                 progressBar1.Text = "Выполнено!";
                 radRichTextEditor1.Text += "Выполнено!\n";
+                sb.Append("\r\n");
+                sb.Append(DateTime.Now + ": Выполнено!\r\n");
             }
             radRichTextEditor1.Text += "Обработано записей в файле: " + cou + "\n";
+            sb.Append(DateTime.Now + ": Обработано записей в файле: " + cou + "\r\n");
             radRichTextEditor1.Text += "Создано файлов: " + cat + "\n";
+            sb.Append(DateTime.Now + ": Создано файлов :" + cat + "\r\n");
+
+            File.AppendAllText(@"C:\Sort-MIV\log.txt", sb.ToString());
+            sb.Clear();
         }
         private void bw_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
@@ -373,7 +394,11 @@ namespace Запрос_информации_МИВ
         }
         private void radButton2_Click(object sender, EventArgs e)
         {
+            sb.Append("\r\n");
+            sb.Append("\r\n");
+            sb.Append("------------------------ " + DateTime.Now + " ------------------------\r\n");
             nowpath = @"C:\Sort-MIV\Беременные_" + Convert.ToString(DateTime.Now).Substring(0, 16).Replace(":", "-") + "\\";
+            sb.Append("Будет создана папка: "+ nowpath + "\r\n");
             CheckDir(); //проверяем папки
             
             string strlen = "";
@@ -383,10 +408,12 @@ namespace Запрос_информации_МИВ
                 sourcefile = Path.GetFileNameWithoutExtension(fbd.SafeFileName);
                 ExcelFilePath = fbd.FileName;
                 radRichTextEditor1.Text += "Выбран файл: " + fbd.FileName + "\n";
+                sb.Append(DateTime.Now + ": Выбран файл: " + fbd.FileName + "\r\n");
                 string Ext1 = Path.GetExtension(ExcelFilePath);
                 if (Ext1 == ".xls" || Ext1 == ".xlsx")
                 {
                     radRichTextEditor1.Text += "Файл успешно открыт\n";
+                    sb.Append(DateTime.Now + ": Файл успешно открыт\r\n");
                     radRichTextEditor1.Text += "Обработка файла, подождите...\n";
 
                     GetTableDataFromXl(fbd.FileName);
@@ -394,16 +421,21 @@ namespace Запрос_информации_МИВ
                     strlen = dt.Rows[1].ItemArray[0].ToString();
                   
                     radRichTextEditor1.Text += "Обнаружено записей в файле: " + dt.Rows.Count + "\n";
+                    sb.Append(DateTime.Now + ": Обнаружено записей в файле: " + dt.Rows.Count + "\r\n");
 
                     UniqueEx();
                     radRichTextEditor1.Text += "Обнаружено учреждений в файле: " + dt_copy.Rows.Count + "\n";
+                    sb.Append(DateTime.Now + ": ООбнаружено учреждений в файле: " + dt_copy.Rows.Count + "\r\n");
                     radRichTextEditor1.Text += "Нажмите кнопку Начать\n";
                 }
                 else
                 {
                     radRichTextEditor1.Text += "Не удалось открыть файл. Это не файл MS Excel!" + "\n";
+                    sb.Append(DateTime.Now + ": Не удалось открыть файл.Это не файл MS Excel!\r\n");
                 }
             }
+            File.AppendAllText(@"C:\Sort-MIV\\log.txt", sb.ToString());
+            sb.Clear();
         }
         private void radButton4_Click(object sender, EventArgs e)
         {
@@ -437,6 +469,7 @@ namespace Запрос_информации_МИВ
             catch (Exception ex)
             {
                 MessageBox.Show("Не удалось записать файлы " + ex);
+                sb.Append(DateTime.Now + ": ООбнаружено учреждений в файле: " + dt_copy.Rows.Count + "\r\n");
             }
         }
     }
