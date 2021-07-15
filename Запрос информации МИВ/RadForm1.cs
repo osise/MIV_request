@@ -472,5 +472,10 @@ namespace Запрос_информации_МИВ
                 sb.Append(DateTime.Now + ": ООбнаружено учреждений в файле: " + dt_copy.Rows.Count + "\r\n");
             }
         }
+
+        private void RadForm1_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }
